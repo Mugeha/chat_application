@@ -1,11 +1,20 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import { AuthProvider } from './context/AuthContext';
+
 function App() {
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
-      <h1 className="text-4xl font-bold text-blue-600">Hello Chat App 👋</h1>
-    </div>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/chat" element={<div>Chat UI (Coming Soon)</div>} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 
 export default App;
-
-

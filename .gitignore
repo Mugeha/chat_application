@@ -1,0 +1,16 @@
+# Root-level
+node_modules/
+.env
+
+# Client and server specific
+client/node_modules/
+server/node_modules/
+client/.env
+server/.env
+dist/
+.vite/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
