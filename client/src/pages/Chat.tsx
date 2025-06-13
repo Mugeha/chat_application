@@ -86,7 +86,7 @@ const Chat = () => {
             toUser === 'lucy123' ? 'bg-blue-500 text-white' : 'hover:bg-blue-100'
           }`}
         >
-          lucy123
+          Jay
         </button>
       </div>
 

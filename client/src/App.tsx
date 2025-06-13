@@ -1,4 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Chat from './pages/Chat';
+
 import Login from './pages/Login';
 import Register from './pages/Register';
 import { AuthProvider } from './context/AuthContext';
@@ -10,7 +12,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/chat" element={<div>Chat UI (Coming Soon)</div>} />
+<Route path="/chat" element={<Chat />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
