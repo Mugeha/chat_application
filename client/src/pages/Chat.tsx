@@ -9,9 +9,12 @@ import axios from 'axios';
 const Chat = () => {
   const { user, logout } = useAuth();
   const socket = useRef<Socket | null>(null);
-  const [toUser, setToUser] = useState<string>('lucy123'); // hardcoded target user
+  const [toUser, setToUser] = useState<string>('lucy123'); // default target
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<any[]>([]);
+
+  const [isTyping, setIsTyping] = useState(false);
+  const [typingFrom, setTypingFrom] = useState('');
 
   if (!user) {
     return <div className="p-4">You must be logged in to access chat.</div>;
@@ -23,6 +26,15 @@ const Chat = () => {
 
     socket.current.on('receive_message', (data) => {
       setMessages((prev) => [...prev, data]);
+    });
+
+    socket.current.on('typing', ({ from }) => {
+      setTypingFrom(from);
+      setIsTyping(true);
+      clearTimeout((socket.current as any)?._typingTimeout);
+      (socket.current as any)._typingTimeout = setTimeout(() => {
+        setIsTyping(false);
+      }, 2000);
     });
 
     return () => {
@@ -75,6 +87,14 @@ const Chat = () => {
     setMessage('');
   };
 
+  const handleTyping = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setMessage(e.target.value);
+    socket.current?.emit('typing', {
+      to: toUser,
+      from: user.username,
+    });
+  };
+
   return (
     <div className="flex h-screen relative">
       {/* Logout Button */}
@@ -91,22 +111,25 @@ const Chat = () => {
       {/* Chat Area */}
       <div className="flex-1 flex flex-col bg-white">
         <div className="flex-1 p-4 overflow-y-auto space-y-2">
+          {isTyping && (
+            <p className="text-sm italic text-gray-500">{typingFrom} is typing...</p>
+          )}
+
           {messages.map((msg, i) => (
             <MessageBubble
-  key={i}
-  message={msg.message}
-  fromSelf={msg.from === user.username}
-  avatar={msg.from !== user.username ? '/avatar.jpg' : undefined}
-  time={
-    msg.createdAt
-      ? new Date(msg.createdAt).toLocaleTimeString([], {
-          hour: '2-digit',
-          minute: '2-digit',
-        })
-      : undefined
-  }
-/>
-
+              key={i}
+              message={msg.message}
+              fromSelf={msg.from === user.username}
+              avatar={msg.from !== user.username ? '/avatar.jpg' : undefined}
+              time={
+                msg.createdAt
+                  ? new Date(msg.createdAt).toLocaleTimeString([], {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })
+                  : undefined
+              }
+            />
           ))}
         </div>
 
@@ -115,7 +138,7 @@ const Chat = () => {
           <input
             className="flex-1 border rounded px-4 py-2"
             value={message}
-            onChange={(e) => setMessage(e.target.value)}
+            onChange={handleTyping}
             placeholder="Type a message..."
           />
           <button
