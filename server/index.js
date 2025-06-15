@@ -4,11 +4,9 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 import authRoutes from './routes/authRoutes.js';
-import { Server } from 'socket.io';
 import messageRoutes from './routes/messageRoutes.js';
 import userRoutes from './routes/userRoutes.js';
-
-
+import { Server } from 'socket.io';
 
 dotenv.config();
 connectDB();
@@ -16,14 +14,11 @@ connectDB();
 const app = express();
 const server = http.createServer(app);
 
-
 app.use(cors());
 app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/users', userRoutes);
-
-
 
 // Setup Socket.IO
 const io = new Server(server, {
@@ -43,6 +38,11 @@ io.on('connection', (socket) => {
 
   socket.on('send_message', ({ to, from, message }) => {
     io.to(to).emit('receive_message', { from, message });
+  });
+
+  // 👇 Typing support added here
+  socket.on('typing', ({ to, from }) => {
+    io.to(to).emit('typing', { from });
   });
 
   socket.on('disconnect', () => {
