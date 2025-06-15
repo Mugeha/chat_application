@@ -1,23 +1,23 @@
 import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import MessageBubble from '../components/MessageBubble';
+import Sidebar from '../components/Sidebar';
+
 import { io, Socket } from 'socket.io-client';
 import axios from 'axios';
 
 const Chat = () => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const socket = useRef<Socket | null>(null);
-  const [toUser, setToUser] = useState<string>('lucy123'); // hardcoded for now
+  const [toUser, setToUser] = useState<string>('lucy123'); // hardcoded target user
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<any[]>([]);
 
   if (!user) {
-  return <div className="p-4">You must be logged in to access chat.</div>;
-}
-
+    return <div className="p-4">You must be logged in to access chat.</div>;
+  }
 
   useEffect(() => {
-    if (!user) return;
-
     socket.current = io('http://localhost:5000');
     socket.current.emit('join', user._id);
 
@@ -47,8 +47,8 @@ const Chat = () => {
   };
 
   useEffect(() => {
-    if (user) fetchMessages();
-  }, [user, toUser]);
+    fetchMessages();
+  }, [toUser]);
 
   const sendMessage = async () => {
     if (!message.trim()) return;
@@ -76,32 +76,27 @@ const Chat = () => {
   };
 
   return (
-    <div className="flex h-screen">
-      {/* Left Sidebar (Hardcoded for now) */}
-      <div className="w-1/4 bg-gray-100 p-4 border-r">
-        <h2 className="text-lg font-semibold mb-4">Contacts</h2>
-        <button
-          onClick={() => setToUser('lucy123')}
-          className={`block w-full text-left px-3 py-2 rounded ${
-            toUser === 'lucy123' ? 'bg-blue-500 text-white' : 'hover:bg-blue-100'
-          }`}
-        >
-          Jay
-        </button>
-      </div>
+    <div className="flex h-screen relative">
+      {/* Logout Button */}
+      <button
+        onClick={logout}
+        className="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded shadow-md z-10"
+      >
+        Logout
+      </button>
+
+      {/* Sidebar */}
+      <Sidebar selected={toUser} onSelect={setToUser} />
 
       {/* Chat Area */}
-      <div className="flex-1 flex flex-col">
-        <div className="flex-1 p-4 overflow-y-auto space-y-2 bg-white">
+      <div className="flex-1 flex flex-col bg-white">
+        <div className="flex-1 p-4 overflow-y-auto space-y-2">
           {messages.map((msg, i) => (
-            <div
+            <MessageBubble
               key={i}
-              className={`p-2 rounded-md max-w-sm ${
-                msg.from === user.username ? 'bg-blue-100 self-end' : 'bg-gray-200 self-start'
-              }`}
-            >
-              {msg.message}
-            </div>
+              message={msg.message}
+              fromSelf={msg.from === user.username}
+            />
           ))}
         </div>
 
