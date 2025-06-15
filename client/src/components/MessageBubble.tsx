@@ -10,10 +10,11 @@ const MessageBubble = ({ message, fromSelf, avatar, time }: Props) => {
     <div className={`flex items-end ${fromSelf ? 'justify-end' : 'justify-start'}`}>
       {!fromSelf && avatar && (
         <img
-          src={avatar}
-          alt="avatar"
-          className="w-8 h-8 rounded-full mr-2"
-        />
+  src={avatar}
+  alt="avatar"
+  className="w-8 h-8 rounded-full object-cover mr-2"
+/>
+
       )}
       <div>
         <div

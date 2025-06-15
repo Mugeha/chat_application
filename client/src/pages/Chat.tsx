@@ -96,7 +96,7 @@ const Chat = () => {
   key={i}
   message={msg.message}
   fromSelf={msg.from === user.username}
-  avatar={msg.from !== user.username ? '/avatar.png' : undefined}
+  avatar={msg.from !== user.username ? '/avatar.jpg' : undefined}
   time={
     msg.createdAt
       ? new Date(msg.createdAt).toLocaleTimeString([], {
