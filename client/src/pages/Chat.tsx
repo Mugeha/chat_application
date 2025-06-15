@@ -96,28 +96,37 @@ const Chat = () => {
   };
 
   return (
-    <div className="flex h-screen relative">
-      {/* Logout Button */}
-      <button
-        onClick={logout}
-        className="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded shadow-md z-10"
-      >
-        Logout
-      </button>
+  <div className="flex h-screen relative">
+    {/* Logout Button */}
+    <button
+      onClick={logout}
+      className="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded shadow-md z-10"
+    >
+      Logout
+    </button>
 
-      {/* Sidebar */}
-      <Sidebar selected={toUser} onSelect={setToUser} />
+    {/* Sidebar */}
+    <Sidebar selected={toUser} onSelect={setToUser} />
 
-      {/* Chat Area */}
-      <div className="flex-1 flex flex-col bg-white">
-        <div className="flex-1 p-4 overflow-y-auto space-y-2">
-          {isTyping && (
-            <p className="text-sm italic text-gray-500">{typingFrom} is typing...</p>
-          )}
+    {/* Chat Panel */}
+    <div className="flex-1 flex flex-col bg-white">
+      {/* Header */}
+      <div className="p-4 border-b font-semibold text-lg shadow">
+        Chatting with <span className="text-blue-600">{toUser}</span>
+      </div>
 
-          {messages.map((msg, i) => (
+      {/* Messages */}
+      <div className="flex-1 p-4 space-y-3 overflow-y-auto flex flex-col bg-white">
+        {isTyping && (
+          <p className="text-sm italic text-gray-500">{typingFrom} is typing...</p>
+        )}
+
+        {messages.map((msg, i) => (
+          <div
+            key={i}
+            className={`flex ${msg.from === user.username ? 'justify-end' : 'justify-start'}`}
+          >
             <MessageBubble
-              key={i}
               message={msg.message}
               fromSelf={msg.from === user.username}
               avatar={msg.from !== user.username ? '/avatar.jpg' : undefined}
@@ -130,27 +139,29 @@ const Chat = () => {
                   : undefined
               }
             />
-          ))}
-        </div>
+          </div>
+        ))}
+      </div>
 
-        {/* Input */}
-        <div className="p-4 border-t flex gap-2">
-          <input
-            className="flex-1 border rounded px-4 py-2"
-            value={message}
-            onChange={handleTyping}
-            placeholder="Type a message..."
-          />
-          <button
-            onClick={sendMessage}
-            className="bg-blue-600 text-white px-4 py-2 rounded"
-          >
-            Send
-          </button>
-        </div>
+      {/* Input */}
+      <div className="p-4 border-t flex gap-2">
+        <input
+          className="flex-1 border rounded px-4 py-2"
+          value={message}
+          onChange={handleTyping}
+          placeholder="Type a message..."
+        />
+        <button
+          onClick={sendMessage}
+          className="bg-blue-600 text-white px-4 py-2 rounded"
+        >
+          Send
+        </button>
       </div>
     </div>
-  );
+  </div>
+);
+
 };
 
 export default Chat;
