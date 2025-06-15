@@ -1,18 +1,30 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Chat from './pages/Chat';
-
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import { AuthProvider } from './context/AuthContext';
+import Chat from './pages/Chat';
+import { AuthProvider, useAuth } from './context/AuthContext';
+
+const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
+  const { user } = useAuth();
+  return user ? children : <Navigate to="/login" />;
+};
 
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Login />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-<Route path="/chat" element={<Chat />} />
+          <Route
+            path="/chat"
+            element={
+              <ProtectedRoute>
+                <Chat />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="*" element={<Navigate to="/login" />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
