@@ -93,10 +93,20 @@ const Chat = () => {
         <div className="flex-1 p-4 overflow-y-auto space-y-2">
           {messages.map((msg, i) => (
             <MessageBubble
-              key={i}
-              message={msg.message}
-              fromSelf={msg.from === user.username}
-            />
+  key={i}
+  message={msg.message}
+  fromSelf={msg.from === user.username}
+  avatar={msg.from !== user.username ? '/avatar.png' : undefined}
+  time={
+    msg.createdAt
+      ? new Date(msg.createdAt).toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit',
+        })
+      : undefined
+  }
+/>
+
           ))}
         </div>
 
