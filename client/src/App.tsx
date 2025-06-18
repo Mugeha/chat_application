@@ -1,5 +1,4 @@
 // In App.tsx, temporarily replace with:
-import React from 'react';
 
 function App() {
   return (
